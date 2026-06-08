@@ -1,0 +1,133 @@
+export type Archetype = {
+  id: string;
+  name: string;
+  tagline: string;
+  description: string;
+  strengths: string[];
+  weaknesses: string[];
+  gradient: string;
+  emoji: string;
+};
+
+export const ARCHETYPES: Record<string, Archetype> = {
+  global_dealmaker: {
+    id: "global_dealmaker",
+    name: "Global Deal Maker",
+    tagline: "Borders bend around you.",
+    description: "You move money, people, and ideas across continents. You see opportunity where others see paperwork.",
+    strengths: ["Negotiation", "Cross-cultural fluency", "Network instinct"],
+    weaknesses: ["Restlessness", "Tendency to over-commit"],
+    gradient: "from-amber-400 via-rose-500 to-violet-600",
+    emoji: "🌍",
+  },
+  silent_strategist: {
+    id: "silent_strategist",
+    name: "Silent Strategist",
+    tagline: "You play three moves ahead.",
+    description: "Quiet, observant, devastating in execution. Most people never see you coming.",
+    strengths: ["Long-term thinking", "Pattern recognition", "Emotional control"],
+    weaknesses: ["Hard to read", "Overthinks small decisions"],
+    gradient: "from-slate-400 via-violet-600 to-indigo-900",
+    emoji: "♟️",
+  },
+  digital_nomad: {
+    id: "digital_nomad",
+    name: "Digital Nomad",
+    tagline: "Wi-Fi is your homeland.",
+    description: "You've made the world your office. Your passport is heavier than your laptop.",
+    strengths: ["Adaptability", "Self-direction", "Cultural curiosity"],
+    weaknesses: ["Rootless", "Decision fatigue"],
+    gradient: "from-cyan-400 via-emerald-400 to-violet-500",
+    emoji: "✈️",
+  },
+  chaos_explorer: {
+    id: "chaos_explorer",
+    name: "Chaos Explorer",
+    tagline: "Comfort is the enemy.",
+    description: "You walk straight into the things most people run from. Risk doesn't scare you — boredom does.",
+    strengths: ["Bravery", "Improvisation", "Energy"],
+    weaknesses: ["Burnout", "Impulsivity"],
+    gradient: "from-rose-500 via-orange-400 to-yellow-400",
+    emoji: "🌪️",
+  },
+  data_warrior: {
+    id: "data_warrior",
+    name: "Data Warrior",
+    tagline: "You argue with evidence, not opinion.",
+    description: "You don't believe — you measure. The world makes more sense after you've graphed it.",
+    strengths: ["Analysis", "Discipline", "Skepticism"],
+    weaknesses: ["Analysis paralysis", "Cold delivery"],
+    gradient: "from-blue-500 via-cyan-400 to-emerald-500",
+    emoji: "📊",
+  },
+  visionary_operator: {
+    id: "visionary_operator",
+    name: "Visionary Operator",
+    tagline: "You see it. Then you ship it.",
+    description: "Rare combination: big imagination AND ruthless execution. Most people are one or the other.",
+    strengths: ["Vision", "Execution", "Leadership"],
+    weaknesses: ["Impatience with others", "Self-pressure"],
+    gradient: "from-violet-500 via-fuchsia-500 to-amber-400",
+    emoji: "🚀",
+  },
+  modern_renaissance: {
+    id: "modern_renaissance",
+    name: "Modern Renaissance",
+    tagline: "Many crafts. One mind.",
+    description: "You refuse to be one thing. Skills, languages, instruments, disciplines — you collect them.",
+    strengths: ["Versatility", "Curiosity", "Synthesis"],
+    weaknesses: ["Spread thin", "Identity drift"],
+    gradient: "from-amber-400 via-pink-500 to-violet-600",
+    emoji: "🎭",
+  },
+  curious_thinker: {
+    id: "curious_thinker",
+    name: "Curious Thinker",
+    tagline: "Why? then Why? again.",
+    description: "Reader. Wonderer. The one who asks the question everyone else was afraid to ask.",
+    strengths: ["Depth", "Patience", "Humility"],
+    weaknesses: ["Indecision", "Reluctant to lead"],
+    gradient: "from-indigo-400 via-violet-500 to-fuchsia-500",
+    emoji: "🧠",
+  },
+  world_connector: {
+    id: "world_connector",
+    name: "World Connector",
+    tagline: "Every room becomes warmer.",
+    description: "You know everyone, and everyone knows someone through you. Communities orbit you.",
+    strengths: ["Charisma", "Empathy", "Network"],
+    weaknesses: ["People-pleasing", "Boundary issues"],
+    gradient: "from-pink-400 via-rose-500 to-orange-400",
+    emoji: "🤝",
+  },
+  maverick_creator: {
+    id: "maverick_creator",
+    name: "Maverick Creator",
+    tagline: "Rules are someone else's default.",
+    description: "You build, write, design, ship — and you do it on your own terms.",
+    strengths: ["Originality", "Courage", "Craft"],
+    weaknesses: ["Friction with structure", "Volatility"],
+    gradient: "from-fuchsia-500 via-rose-500 to-amber-400",
+    emoji: "🎨",
+  },
+  night_owl_genius: {
+    id: "night_owl_genius",
+    name: "Night Owl Genius",
+    tagline: "Your best ideas wake up at 2am.",
+    description: "The world goes quiet. Your mind goes loud. You make brilliant things when nobody is watching.",
+    strengths: ["Deep focus", "Original thought", "Self-direction"],
+    weaknesses: ["Sleep debt", "Social misalignment"],
+    gradient: "from-indigo-900 via-violet-600 to-fuchsia-500",
+    emoji: "🌙",
+  },
+  master_builder: {
+    id: "master_builder",
+    name: "Master Builder",
+    tagline: "You finish what you start.",
+    description: "Disciplined, patient, methodical. The person teams quietly depend on to actually ship the thing.",
+    strengths: ["Reliability", "Craftsmanship", "Stamina"],
+    weaknesses: ["Risk-averse", "Slow to pivot"],
+    gradient: "from-emerald-500 via-cyan-500 to-blue-600",
+    emoji: "🛠️",
+  },
+};
