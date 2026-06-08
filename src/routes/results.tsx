@@ -16,15 +16,8 @@ export const Route = createFileRoute("/results")({
   component: Results,
 });
 
-const SAMPLE_ANSWERS: Record<string, string | number> = {
-  age: 29, gender: "male", continent: "europe", height: 184, eyes: "green", hand: "left",
-  education: "master", languages: 3, industry: "tech", income: "120_250", business: "side",
-  fitness: 4, gaming: 6, reading: 18, smoking: "never", sleep: "owl",
-  countries: 22, coding: "expert", swim: "yes", instruments: 2, speaking: 8,
-  ai: "power", social: 2, intro: 7, leader: 8, creative: 9, risk: 8,
-};
-
 function Results() {
+
   const [answers, setAnswers] = useState<Record<string, string | number> | null>(null);
   const navigate = useNavigate();
 

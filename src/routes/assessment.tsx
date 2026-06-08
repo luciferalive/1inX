@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 import { CosmicBackground, SiteHeader } from "@/components/site-chrome";
