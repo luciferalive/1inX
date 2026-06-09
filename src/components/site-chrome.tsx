@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { LogOut, User } from "lucide-react";
 import { useState } from "react";
+import { HamburgerButton, SideNav } from "@/components/side-nav";
 
 export function SiteHeader() {
   const { user, profile, signOut } = useAuth();
