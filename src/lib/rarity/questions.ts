@@ -2,13 +2,13 @@ export type Question = {
   id: string;
   category: string;
   label: string;
-  type: "select" | "number" | "slider";
+  type: "select" | "number" | "slider" | "height";
   options?: { value: string; label: string; rarity: number }[]; // rarity = % of population with this answer (0–100)
   min?: number;
   max?: number;
   step?: number;
   unit?: string;
-  /** For number/slider: rarity curve — function from value -> rarity % */
+  /** For number/slider/height: rarity curve — function from value -> rarity % (height: value in cm) */
   rarityFn?: (v: number) => number;
 };
 
