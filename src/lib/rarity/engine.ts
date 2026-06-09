@@ -50,7 +50,7 @@ function rawRarityForAnswer(q: Question, value: string | number): number {
     const opt = q.options.find((o) => o.value === value);
     return opt?.rarity ?? 50;
   }
-  if ((q.type === "number" || q.type === "slider") && q.rarityFn) {
+  if ((q.type === "number" || q.type === "slider" || q.type === "height") && q.rarityFn) {
     return q.rarityFn(Number(value));
   }
   return 50;
