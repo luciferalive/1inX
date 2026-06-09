@@ -7,18 +7,23 @@ import { HamburgerButton, SideNav } from "@/components/side-nav";
 export function SiteHeader() {
   const { user, profile, signOut } = useAuth();
   const [open, setOpen] = useState(false);
+  const [navOpen, setNavOpen] = useState(false);
 
   return (
     <header className="relative z-20">
+      <SideNav open={navOpen} onClose={() => setNavOpen(false)} />
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
-        <Link to="/" className="group flex items-center gap-2">
-          <div className="relative grid h-9 w-9 place-items-center rounded-xl bg-gradient-cosmic shadow-glow">
-            <span className="font-display text-lg font-bold text-white">1</span>
-          </div>
-          <span className="font-display text-lg font-semibold tracking-tight">
-            in <span className="text-gradient-cosmic">X</span>
-          </span>
-        </Link>
+        <div className="flex items-center gap-3">
+          <HamburgerButton onClick={() => setNavOpen(true)} />
+          <Link to="/" className="group flex items-center gap-2">
+            <div className="relative grid h-9 w-9 place-items-center rounded-xl bg-gradient-cosmic shadow-glow">
+              <span className="font-display text-lg font-bold text-white">1</span>
+            </div>
+            <span className="font-display text-lg font-semibold tracking-tight">
+              in <span className="text-gradient-cosmic">X</span>
+            </span>
+          </Link>
+        </div>
         <nav className="flex items-center gap-2 text-sm sm:gap-4">
           <Link to="/discover" className="hidden text-muted-foreground hover:text-foreground sm:block">Discover</Link>
           <Link to="/leaderboard" className="hidden text-muted-foreground hover:text-foreground sm:block">Leaderboard</Link>
