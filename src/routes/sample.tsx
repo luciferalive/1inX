@@ -23,5 +23,5 @@ const SAMPLE: Record<string, string | number> = {
 
 function Sample() {
   const result = useMemo(() => calculateRarity(SAMPLE), []);
-  return <ResultsView result={result} />;
+  return <ResultsView result={result} username="shadowfox" tier="free" />;
 }
