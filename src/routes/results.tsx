@@ -11,6 +11,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { saveResult, getMyLatestResult } from "@/lib/results.functions";
 import { ARCHETYPES } from "@/lib/rarity/archetypes";
 import { downloadShareCard, shareUrl, copyLink } from "@/lib/share";
+import { ShareCard, THEME_LABELS, type ShareTheme } from "@/components/share-card";
 
 export const Route = createFileRoute("/results")({
   ssr: false,
