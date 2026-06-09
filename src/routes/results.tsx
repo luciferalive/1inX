@@ -413,10 +413,40 @@ export function ResultsView({ result, username, tier }: { result: RarityResult; 
         </section>
 
         {/* SHARE */}
-        <section className="mt-12 rounded-3xl glass-strong p-8 text-center shadow-card">
-          <Share2 className="mx-auto h-7 w-7 text-gold" />
-          <h3 className="mt-3 font-display text-2xl font-semibold">Share your rarity</h3>
-          <p className="mt-2 text-sm text-muted-foreground">Download a card or post directly.</p>
+        <section className="mt-12 rounded-3xl glass-strong p-8 shadow-card">
+          <div className="text-center">
+            <Share2 className="mx-auto h-7 w-7 text-gold" />
+            <h3 className="mt-3 font-display text-2xl font-semibold">Share your rarity</h3>
+            <p className="mt-2 text-sm text-muted-foreground">Pick a theme. Download the card. Post it anywhere.</p>
+          </div>
+
+          {/* Theme picker */}
+          <div className="mt-6 flex flex-wrap justify-center gap-2">
+            {THEME_LABELS.map((t) => (
+              <button
+                key={t.id}
+                onClick={() => setShareTheme(t.id)}
+                className={`group flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium transition ${
+                  shareTheme === t.id ? "border-white/40 bg-white/10" : "border-white/10 hover:border-white/25"
+                }`}
+              >
+                <span className="h-4 w-4 rounded-full ring-1 ring-white/20" style={{ background: t.swatch }} />
+                {t.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Live card preview */}
+          <div className="mx-auto mt-6 max-w-sm">
+            <ShareCard
+              ref={shareCardRef}
+              result={result}
+              username={username}
+              theme={shareTheme}
+              animateCount={false}
+            />
+          </div>
+
           <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
             <button onClick={handleDownload} className="inline-flex items-center gap-2 rounded-full bg-gradient-violet-magenta px-5 py-2.5 text-sm font-semibold text-white shadow-glow">
               <Download className="h-4 w-4" /> Download card
