@@ -13,7 +13,12 @@ export const Route = createFileRoute("/plans")({
   component: PlansPage,
 });
 
-const PLANS = [
+type Plan = {
+  id: string; name: string; price: string; blurb: string;
+  features: string[]; accent: string; popular?: boolean;
+};
+
+const PLANS: Plan[] = [
   {
     id: "free", name: "Free", price: "$0",
     blurb: "Your rarity score and archetype.",
@@ -39,7 +44,7 @@ const PLANS = [
     features: ["Everything in Pro", "Relationship analysis", "Saved comparisons", "Historical snapshots", "Priority support"],
     accent: "from-emerald-400/30 to-cyan-500/30",
   },
-] as const;
+];
 
 function PlansPage() {
   function onUpgrade(p: string) {
