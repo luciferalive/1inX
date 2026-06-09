@@ -190,6 +190,8 @@ export function ResultsView({ result, username, tier }: { result: RarityResult; 
   const badges = getBadges(result);
   const oneInXFormatted = formatOneInX(result.oneInX);
   const cardRef = useRef<HTMLDivElement>(null);
+  const shareCardRef = useRef<HTMLDivElement>(null);
+  const [shareTheme, setShareTheme] = useState<ShareTheme>("cosmic");
   const shareText = `I'm 1 in ${oneInXFormatted} — rarer than ${result.percentile.toFixed(2)}% of people. Find your number on 1 in X.`;
   const shareLink = typeof window !== "undefined"
     ? (username ? `${window.location.origin}/u/${username}` : window.location.origin)
@@ -198,9 +200,10 @@ export function ResultsView({ result, username, tier }: { result: RarityResult; 
   const unlocked = tier !== "free";
 
   async function handleDownload() {
-    if (!cardRef.current) return;
+    const el = shareCardRef.current ?? cardRef.current;
+    if (!el) return;
     try {
-      await downloadShareCard(cardRef.current, `1-in-${result.oneInX}.png`);
+      await downloadShareCard(el, `1-in-${result.oneInX}-${shareTheme}.png`);
       toast.success("Share card downloaded");
     } catch (e: any) {
       toast.error("Could not generate image");
