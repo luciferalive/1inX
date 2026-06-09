@@ -29,6 +29,7 @@ function Assessment() {
     if (idx === QUESTIONS.length - 1) {
       try {
         sessionStorage.setItem("rarity_answers", JSON.stringify(answers));
+        sessionStorage.removeItem("rarity_saved");
       } catch {}
       navigate({ to: "/results" });
       return;
