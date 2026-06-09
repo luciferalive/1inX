@@ -156,6 +156,9 @@ function QuestionInput({
       </div>
     );
   }
+  if (q.type === "height") {
+    return <HeightInput value={typeof value === "number" ? value : undefined} onChange={(v) => onChange(v)} />;
+  }
   // slider
   const v = typeof value === "number" ? value : Math.round(((q.min ?? 1) + (q.max ?? 10)) / 2);
   return (
@@ -173,6 +176,113 @@ function QuestionInput({
       <div className="mt-2 flex justify-between text-xs text-muted-foreground">
         <span>{q.min ?? 1}</span>
         <span>{q.max ?? 10}</span>
+      </div>
+    </div>
+  );
+}
+
+type Unit = "ftin" | "cm" | "m";
+
+function HeightInput({ value, onChange }: { value: number | undefined; onChange: (cm: number) => void }) {
+  const [unit, setUnit] = useState<Unit>("ftin");
+  // derive display values from stored cm
+  const cm = value ?? 170;
+  const totalIn = cm / 2.54;
+  const ft = Math.floor(totalIn / 12);
+  const inch = Math.max(0, Math.min(11, Math.round(totalIn - ft * 12)));
+
+  function setFtIn(nextFt: number, nextIn: number) {
+    onChange(Math.round((nextFt * 12 + nextIn) * 2.54));
+  }
+
+  return (
+    <div className="rounded-2xl glass p-6">
+      <div className="mb-5 flex gap-1 rounded-full bg-white/5 p-1 text-xs">
+        {([
+          ["ftin", "Feet / Inches"],
+          ["cm", "Centimeters"],
+          ["m", "Meters"],
+        ] as const).map(([u, label]) => (
+          <button
+            key={u}
+            type="button"
+            onClick={() => setUnit(u)}
+            className={`flex-1 rounded-full px-3 py-1.5 transition ${
+              unit === u ? "bg-gradient-violet-magenta text-white" : "text-muted-foreground"
+            }`}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {unit === "ftin" && (
+        <div className="flex items-end justify-center gap-4">
+          <label className="flex flex-col items-center">
+            <select
+              value={ft}
+              onChange={(e) => setFtIn(Number(e.target.value), inch)}
+              className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 font-display text-3xl font-semibold outline-none"
+            >
+              {Array.from({ length: 5 }, (_, i) => i + 4).map((f) => (
+                <option key={f} value={f} className="bg-background">{f}</option>
+              ))}
+            </select>
+            <span className="mt-1 text-xs text-muted-foreground">feet</span>
+          </label>
+          <label className="flex flex-col items-center">
+            <select
+              value={inch}
+              onChange={(e) => setFtIn(ft, Number(e.target.value))}
+              className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 font-display text-3xl font-semibold outline-none"
+            >
+              {Array.from({ length: 12 }, (_, i) => i).map((n) => (
+                <option key={n} value={n} className="bg-background">{n}</option>
+              ))}
+            </select>
+            <span className="mt-1 text-xs text-muted-foreground">inches</span>
+          </label>
+        </div>
+      )}
+
+      {unit === "cm" && (
+        <div>
+          <input
+            type="number"
+            min={120}
+            max={230}
+            value={value ?? ""}
+            onChange={(e) => onChange(e.target.value === "" ? 0 : Number(e.target.value))}
+            placeholder="170"
+            autoFocus
+            className="w-full bg-transparent text-center font-display text-5xl font-semibold outline-none placeholder:text-muted-foreground/40"
+          />
+          <div className="mt-2 text-center text-xs text-muted-foreground">cm</div>
+        </div>
+      )}
+
+      {unit === "m" && (
+        <div>
+          <input
+            type="number"
+            min={1.2}
+            max={2.3}
+            step={0.01}
+            value={value ? (value / 100).toFixed(2) : ""}
+            onChange={(e) => {
+              const m = Number(e.target.value);
+              if (!isNaN(m)) onChange(Math.round(m * 100));
+            }}
+            placeholder="1.70"
+            autoFocus
+            className="w-full bg-transparent text-center font-display text-5xl font-semibold outline-none placeholder:text-muted-foreground/40"
+          />
+          <div className="mt-2 text-center text-xs text-muted-foreground">meters</div>
+        </div>
+      )}
+
+      <div className="mt-4 text-center text-xs text-muted-foreground">
+        {value ? `${value} cm · ${ft}'${inch}" · ${(value / 100).toFixed(2)} m` : "Choose your height"}
       </div>
     </div>
   );

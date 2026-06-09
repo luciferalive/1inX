@@ -50,7 +50,7 @@ function rawRarityForAnswer(q: Question, value: string | number): number {
     const opt = q.options.find((o) => o.value === value);
     return opt?.rarity ?? 50;
   }
-  if ((q.type === "number" || q.type === "slider") && q.rarityFn) {
+  if ((q.type === "number" || q.type === "slider" || q.type === "height") && q.rarityFn) {
     return q.rarityFn(Number(value));
   }
   return 50;
@@ -59,6 +59,13 @@ function rawRarityForAnswer(q: Question, value: string | number): number {
 function labelForAnswer(q: Question, value: string | number): string {
   if (q.type === "select" && q.options) {
     return q.options.find((o) => o.value === value)?.label ?? String(value);
+  }
+  if (q.type === "height") {
+    const cm = Number(value);
+    const totalIn = cm / 2.54;
+    const ft = Math.floor(totalIn / 12);
+    const inch = Math.round(totalIn - ft * 12);
+    return `${cm} cm · ${ft}'${inch}"`;
   }
   return `${value}${q.unit ? " " + q.unit : ""}`;
 }

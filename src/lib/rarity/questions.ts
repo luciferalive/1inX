@@ -2,13 +2,13 @@ export type Question = {
   id: string;
   category: string;
   label: string;
-  type: "select" | "number" | "slider";
+  type: "select" | "number" | "slider" | "height";
   options?: { value: string; label: string; rarity: number }[]; // rarity = % of population with this answer (0–100)
   min?: number;
   max?: number;
   step?: number;
   unit?: string;
-  /** For number/slider: rarity curve — function from value -> rarity % */
+  /** For number/slider/height: rarity curve — function from value -> rarity % (height: value in cm) */
   rarityFn?: (v: number) => number;
 };
 
@@ -43,9 +43,9 @@ export const QUESTIONS: Question[] = [
     ],
   },
   {
-    id: "height", category: "Personal", label: "Height", type: "number", min: 120, max: 230, unit: "cm",
+    id: "height", category: "Personal", label: "Height", type: "height", min: 120, max: 230, unit: "cm",
     rarityFn: (v) => {
-      // bell curve around 168
+      // bell curve around 168 cm
       const d = Math.abs(v - 168);
       return Math.max(0.2, 30 * Math.exp(-(d * d) / 200));
     },
@@ -53,13 +53,14 @@ export const QUESTIONS: Question[] = [
   {
     id: "eyes", category: "Personal", label: "Eye color", type: "select",
     options: [
-      { value: "brown", label: "Brown", rarity: 79 },
+      { value: "brown", label: "Brown", rarity: 70 },
+      { value: "black", label: "Black", rarity: 10 },
       { value: "blue", label: "Blue", rarity: 8 },
       { value: "hazel", label: "Hazel", rarity: 5 },
-      { value: "amber", label: "Amber", rarity: 5 },
+      { value: "amber", label: "Amber", rarity: 3 },
       { value: "green", label: "Green", rarity: 2 },
       { value: "gray", label: "Gray", rarity: 1 },
-      { value: "violet", label: "Violet / Heterochromia", rarity: 0.1 },
+      { value: "other", label: "Other / Heterochromia", rarity: 1 },
     ],
   },
   {

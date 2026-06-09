@@ -11,14 +11,20 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SampleRouteImport } from './routes/sample'
 import { Route as ResultsRouteImport } from './routes/results'
+import { Route as PlansRouteImport } from './routes/plans'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
+import { Route as HelpRouteImport } from './routes/help'
 import { Route as DiscoverRouteImport } from './routes/discover'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AssessmentRouteImport } from './routes/assessment'
+import { Route as ArchetypesRouteImport } from './routes/archetypes'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UUsernameRouteImport } from './routes/u.$username'
+import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
+import { Route as AuthenticatedSavedRouteImport } from './routes/_authenticated/saved'
 import { Route as AuthenticatedReferralsRouteImport } from './routes/_authenticated/referrals'
+import { Route as AuthenticatedAchievementsRouteImport } from './routes/_authenticated/achievements'
 
 const SampleRoute = SampleRouteImport.update({
   id: '/sample',
@@ -30,9 +36,19 @@ const ResultsRoute = ResultsRouteImport.update({
   path: '/results',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PlansRoute = PlansRouteImport.update({
+  id: '/plans',
+  path: '/plans',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LeaderboardRoute = LeaderboardRouteImport.update({
   id: '/leaderboard',
   path: '/leaderboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HelpRoute = HelpRouteImport.update({
+  id: '/help',
+  path: '/help',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DiscoverRoute = DiscoverRouteImport.update({
@@ -50,6 +66,11 @@ const AssessmentRoute = AssessmentRouteImport.update({
   path: '/assessment',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ArchetypesRoute = ArchetypesRouteImport.update({
+  id: '/archetypes',
+  path: '/archetypes',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
@@ -64,91 +85,146 @@ const UUsernameRoute = UUsernameRouteImport.update({
   path: '/u/$username',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedSavedRoute = AuthenticatedSavedRouteImport.update({
+  id: '/saved',
+  path: '/saved',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedReferralsRoute = AuthenticatedReferralsRouteImport.update({
   id: '/referrals',
   path: '/referrals',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAchievementsRoute =
+  AuthenticatedAchievementsRouteImport.update({
+    id: '/achievements',
+    path: '/achievements',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/archetypes': typeof ArchetypesRoute
   '/assessment': typeof AssessmentRoute
   '/auth': typeof AuthRoute
   '/discover': typeof DiscoverRoute
+  '/help': typeof HelpRoute
   '/leaderboard': typeof LeaderboardRoute
+  '/plans': typeof PlansRoute
   '/results': typeof ResultsRoute
   '/sample': typeof SampleRoute
+  '/achievements': typeof AuthenticatedAchievementsRoute
   '/referrals': typeof AuthenticatedReferralsRoute
+  '/saved': typeof AuthenticatedSavedRoute
+  '/settings': typeof AuthenticatedSettingsRoute
   '/u/$username': typeof UUsernameRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/archetypes': typeof ArchetypesRoute
   '/assessment': typeof AssessmentRoute
   '/auth': typeof AuthRoute
   '/discover': typeof DiscoverRoute
+  '/help': typeof HelpRoute
   '/leaderboard': typeof LeaderboardRoute
+  '/plans': typeof PlansRoute
   '/results': typeof ResultsRoute
   '/sample': typeof SampleRoute
+  '/achievements': typeof AuthenticatedAchievementsRoute
   '/referrals': typeof AuthenticatedReferralsRoute
+  '/saved': typeof AuthenticatedSavedRoute
+  '/settings': typeof AuthenticatedSettingsRoute
   '/u/$username': typeof UUsernameRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/archetypes': typeof ArchetypesRoute
   '/assessment': typeof AssessmentRoute
   '/auth': typeof AuthRoute
   '/discover': typeof DiscoverRoute
+  '/help': typeof HelpRoute
   '/leaderboard': typeof LeaderboardRoute
+  '/plans': typeof PlansRoute
   '/results': typeof ResultsRoute
   '/sample': typeof SampleRoute
+  '/_authenticated/achievements': typeof AuthenticatedAchievementsRoute
   '/_authenticated/referrals': typeof AuthenticatedReferralsRoute
+  '/_authenticated/saved': typeof AuthenticatedSavedRoute
+  '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/u/$username': typeof UUsernameRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/archetypes'
     | '/assessment'
     | '/auth'
     | '/discover'
+    | '/help'
     | '/leaderboard'
+    | '/plans'
     | '/results'
     | '/sample'
+    | '/achievements'
     | '/referrals'
+    | '/saved'
+    | '/settings'
     | '/u/$username'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/archetypes'
     | '/assessment'
     | '/auth'
     | '/discover'
+    | '/help'
     | '/leaderboard'
+    | '/plans'
     | '/results'
     | '/sample'
+    | '/achievements'
     | '/referrals'
+    | '/saved'
+    | '/settings'
     | '/u/$username'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/archetypes'
     | '/assessment'
     | '/auth'
     | '/discover'
+    | '/help'
     | '/leaderboard'
+    | '/plans'
     | '/results'
     | '/sample'
+    | '/_authenticated/achievements'
     | '/_authenticated/referrals'
+    | '/_authenticated/saved'
+    | '/_authenticated/settings'
     | '/u/$username'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  ArchetypesRoute: typeof ArchetypesRoute
   AssessmentRoute: typeof AssessmentRoute
   AuthRoute: typeof AuthRoute
   DiscoverRoute: typeof DiscoverRoute
+  HelpRoute: typeof HelpRoute
   LeaderboardRoute: typeof LeaderboardRoute
+  PlansRoute: typeof PlansRoute
   ResultsRoute: typeof ResultsRoute
   SampleRoute: typeof SampleRoute
   UUsernameRoute: typeof UUsernameRoute
@@ -170,11 +246,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResultsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/plans': {
+      id: '/plans'
+      path: '/plans'
+      fullPath: '/plans'
+      preLoaderRoute: typeof PlansRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/leaderboard': {
       id: '/leaderboard'
       path: '/leaderboard'
       fullPath: '/leaderboard'
       preLoaderRoute: typeof LeaderboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/help': {
+      id: '/help'
+      path: '/help'
+      fullPath: '/help'
+      preLoaderRoute: typeof HelpRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/discover': {
@@ -198,6 +288,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AssessmentRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/archetypes': {
+      id: '/archetypes'
+      path: '/archetypes'
+      fullPath: '/archetypes'
+      preLoaderRoute: typeof ArchetypesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated': {
       id: '/_authenticated'
       path: ''
@@ -219,6 +316,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UUsernameRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/settings': {
+      id: '/_authenticated/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/saved': {
+      id: '/_authenticated/saved'
+      path: '/saved'
+      fullPath: '/saved'
+      preLoaderRoute: typeof AuthenticatedSavedRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/referrals': {
       id: '/_authenticated/referrals'
       path: '/referrals'
@@ -226,15 +337,28 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedReferralsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/achievements': {
+      id: '/_authenticated/achievements'
+      path: '/achievements'
+      fullPath: '/achievements'
+      preLoaderRoute: typeof AuthenticatedAchievementsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAchievementsRoute: typeof AuthenticatedAchievementsRoute
   AuthenticatedReferralsRoute: typeof AuthenticatedReferralsRoute
+  AuthenticatedSavedRoute: typeof AuthenticatedSavedRoute
+  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAchievementsRoute: AuthenticatedAchievementsRoute,
   AuthenticatedReferralsRoute: AuthenticatedReferralsRoute,
+  AuthenticatedSavedRoute: AuthenticatedSavedRoute,
+  AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -243,10 +367,13 @@ const AuthenticatedRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  ArchetypesRoute: ArchetypesRoute,
   AssessmentRoute: AssessmentRoute,
   AuthRoute: AuthRoute,
   DiscoverRoute: DiscoverRoute,
+  HelpRoute: HelpRoute,
   LeaderboardRoute: LeaderboardRoute,
+  PlansRoute: PlansRoute,
   ResultsRoute: ResultsRoute,
   SampleRoute: SampleRoute,
   UUsernameRoute: UUsernameRoute,
@@ -254,13 +381,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
