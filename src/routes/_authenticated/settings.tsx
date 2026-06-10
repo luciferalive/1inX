@@ -106,9 +106,6 @@ function SettingsPage() {
       setBusy(false);
     }
   }
-      setBusy(false);
-    }
-  }
 
   return (
     <div className="grain relative min-h-screen">
