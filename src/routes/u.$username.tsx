@@ -7,9 +7,10 @@ import { Trophy, MapPin } from "lucide-react";
 
 export const Route = createFileRoute("/u/$username")({
   loader: async ({ params }) => {
-    const { profile, result, badges } = await getPublicProfile({ data: { username: params.username } });
-    if (!profile) throw notFound();
-    return { profile, result, badges };
+    const res = await getPublicProfile({ data: { username: params.username } });
+    if (res.visibility === "not_found") throw notFound();
+    if (!res.profile) return { profile: null, result: null, badges: [], visibility: res.visibility };
+    return { profile: res.profile, result: res.result, badges: res.badges, visibility: res.visibility };
   },
   head: ({ loaderData }) => ({
     meta: loaderData?.profile
@@ -44,7 +45,30 @@ export const Route = createFileRoute("/u/$username")({
 });
 
 function PublicProfile() {
-  const { profile, result, badges } = Route.useLoaderData();
+  const { profile, result, badges, visibility } = Route.useLoaderData() as any;
+  if (!profile) {
+    return (
+      <div className="grain relative min-h-screen">
+        <CosmicBackground />
+        <SiteHeader />
+        <main className="mx-auto max-w-md px-6 py-24 text-center">
+          <h1 className="font-display text-2xl">
+            {visibility === "private" ? "This profile is private" : "Sign in to view this profile"}
+          </h1>
+          <p className="mt-3 text-sm text-muted-foreground">
+            {visibility === "private"
+              ? "The owner has chosen to keep this profile private."
+              : "This profile is only visible to members. Sign in to continue."}
+          </p>
+          {visibility === "members_only" && (
+            <Link to="/auth" className="mt-6 inline-block rounded-full bg-gradient-violet-magenta px-5 py-2.5 text-sm font-semibold text-white shadow-glow">
+              Sign in
+            </Link>
+          )}
+        </main>
+      </div>
+    );
+  }
   const archetype = result ? ARCHETYPES[result.archetype_key] : null;
 
   return (
