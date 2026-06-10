@@ -1,10 +1,17 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { useServerFn } from "@tanstack/react-start";
 import { CosmicBackground, SiteHeader } from "@/components/site-chrome";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
-import { Settings as SettingsIcon, Trash2, KeyRound, Bell, Shield, User as UserIcon } from "lucide-react";
+import { deleteMyAccount, updatePrivacy } from "@/lib/account.functions";
+import { Settings as SettingsIcon, Trash2, KeyRound, Bell, Shield, User as UserIcon, Eye } from "lucide-react";
+
+export const Route = createFileRoute("/_authenticated/settings")({
+  head: () => ({ meta: [{ title: "Settings — 1 in X" }] }),
+  component: SettingsPage,
+});
 
 export const Route = createFileRoute("/_authenticated/settings")({
   head: () => ({ meta: [{ title: "Settings — 1 in X" }] }),
@@ -13,6 +20,7 @@ export const Route = createFileRoute("/_authenticated/settings")({
 
 function SettingsPage() {
   const { user, profile, refreshProfile, signOut } = useAuth();
+  const navigate = useNavigate();
   const [username, setUsername] = useState(profile?.username ?? "");
   const [displayName, setDisplayName] = useState(profile?.display_name ?? "");
   const [bio, setBio] = useState(profile?.bio ?? "");
@@ -20,9 +28,36 @@ function SettingsPage() {
   const [pwd, setPwd] = useState("");
   const [busy, setBusy] = useState(false);
 
-  // Preferences (client-side for now)
+  // Privacy controls (synced from profile when loaded)
+  const [profileVisibility, setProfileVisibility] = useState<"public" | "members" | "private">("public");
+  const [resultVisibility, setResultVisibility] = useState<"private" | "link" | "public">("private");
+  const [showLeaderboard, setShowLeaderboard] = useState(true);
+  const [allowSearch, setAllowSearch] = useState(true);
+
+  // Notification prefs (client-side for now)
   const [emailMe, setEmailMe] = useState(true);
-  const [publicProfile, setPublicProfile] = useState(true);
+
+  useEffect(() => {
+    if (!profile) return;
+    const p = profile as any;
+    if (p.profile_visibility) setProfileVisibility(p.profile_visibility);
+    if (p.result_visibility) setResultVisibility(p.result_visibility);
+    if (typeof p.show_on_leaderboard === "boolean") setShowLeaderboard(p.show_on_leaderboard);
+    if (typeof p.allow_search === "boolean") setAllowSearch(p.allow_search);
+  }, [profile]);
+
+  const savePrivacy = useServerFn(updatePrivacy);
+  const wipeAccount = useServerFn(deleteMyAccount);
+
+  async function patchPrivacy(patch: Record<string, any>) {
+    try {
+      await savePrivacy({ data: patch });
+      await refreshProfile();
+      toast.success("Privacy updated");
+    } catch (e: any) {
+      toast.error(e?.message ?? "Could not save");
+    }
+  }
 
   async function saveProfile(e: React.FormEvent) {
     e.preventDefault();
