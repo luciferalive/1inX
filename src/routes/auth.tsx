@@ -204,15 +204,6 @@ function AuthPage() {
                 className="mt-1 w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-sm outline-none focus:border-white/30"
               />
             </div>
-            <button
-              type="submit"
-              disabled={busy}
-              className="mt-2 w-full rounded-full bg-gradient-violet-magenta px-5 py-3 text-sm font-semibold text-white shadow-glow disabled:opacity-60"
-            >
-              {busy ? "Working…" : tab === "signup" ? "Create account" : "Sign in"}
-            </button>
-          </form>
-
             {tab === "signup" && (
               <div className="mt-2 space-y-2 rounded-xl border border-white/10 bg-white/5 p-3 text-xs text-muted-foreground">
                 <ConsentRow checked={acceptTos} onChange={setAcceptTos}>
