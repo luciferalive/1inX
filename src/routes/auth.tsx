@@ -71,6 +71,11 @@ function AuthPage() {
     setBusy(true);
     try {
       if (tab === "signup") {
+        if (!consentOk) {
+          toast.error("Please accept the Terms and Privacy Policy to continue");
+          setBusy(false);
+          return;
+        }
         if (!usernameRegex.test(username)) {
           toast.error("Username must be 3–20 chars (a–z, 0–9, _)");
           setBusy(false);
@@ -82,7 +87,12 @@ function AuthPage() {
           password,
           options: {
             emailRedirectTo: window.location.origin + (next ?? "/results"),
-            data: { username, referred_by: referredBy ?? undefined },
+            data: {
+              username,
+              referred_by: referredBy ?? undefined,
+              consent_version: "1.0",
+              consented_at: new Date().toISOString(),
+            },
           },
         });
         if (error) throw error;
@@ -203,12 +213,48 @@ function AuthPage() {
             </button>
           </form>
 
+            {tab === "signup" && (
+              <div className="mt-2 space-y-2 rounded-xl border border-white/10 bg-white/5 p-3 text-xs text-muted-foreground">
+                <ConsentRow checked={acceptTos} onChange={setAcceptTos}>
+                  I agree to the <Link to="/terms" className="underline">Terms of Service</Link>
+                </ConsentRow>
+                <ConsentRow checked={acceptPrivacy} onChange={setAcceptPrivacy}>
+                  I agree to the <Link to="/privacy" className="underline">Privacy Policy</Link>
+                </ConsentRow>
+                <ConsentRow checked={acceptAssessment} onChange={setAcceptAssessment}>
+                  I understand my assessment data will be processed to generate rarity results
+                </ConsentRow>
+              </div>
+            )}
+            <button
+              type="submit"
+              disabled={busy || (tab === "signup" && !consentOk)}
+              className="mt-2 w-full rounded-full bg-gradient-violet-magenta px-5 py-3 text-sm font-semibold text-white shadow-glow disabled:opacity-60"
+            >
+              {busy ? "Working…" : tab === "signup" ? "Create account" : "Sign in"}
+            </button>
+          </form>
+
           <p className="mt-5 text-center text-xs text-muted-foreground">
-            By continuing you agree to our terms. <Link to="/" className="underline">Cancel</Link>
+            <Link to="/terms" className="underline">Terms</Link> · <Link to="/privacy" className="underline">Privacy</Link> · <Link to="/" className="underline">Cancel</Link>
           </p>
         </div>
       </main>
     </div>
+  );
+}
+
+function ConsentRow({ checked, onChange, children }: { checked: boolean; onChange: (b: boolean) => void; children: React.ReactNode }) {
+  return (
+    <label className="flex cursor-pointer items-start gap-2">
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+        className="mt-0.5 h-4 w-4 rounded border-white/20 bg-transparent accent-fuchsia-500"
+      />
+      <span>{children}</span>
+    </label>
   );
 }
 
