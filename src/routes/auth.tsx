@@ -33,9 +33,18 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
+  const [acceptTos, setAcceptTos] = useState(false);
+  const [acceptPrivacy, setAcceptPrivacy] = useState(false);
+  const [acceptAssessment, setAcceptAssessment] = useState(false);
   const [busy, setBusy] = useState(false);
 
+  const consentOk = tab === "signin" || (acceptTos && acceptPrivacy && acceptAssessment);
+
   async function handleGoogle() {
+    if (tab === "signup" && !consentOk) {
+      toast.error("Please accept the Terms and Privacy Policy to continue");
+      return;
+    }
     setBusy(true);
     try {
       const referredBy = getReferralId();
