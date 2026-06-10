@@ -117,8 +117,11 @@ export type Database = {
       }
       profiles: {
         Row: {
+          allow_search: boolean
           avatar_url: string | null
           bio: string | null
+          consent_version: string | null
+          consented_at: string | null
           country: string | null
           created_at: string
           display_name: string | null
@@ -126,14 +129,20 @@ export type Database = {
           following_count: number
           id: string
           likes_count: number
+          profile_visibility: string
           referred_by: string | null
+          result_visibility: string
+          show_on_leaderboard: boolean
           tier: Database["public"]["Enums"]["tier"]
           updated_at: string
           username: string
         }
         Insert: {
+          allow_search?: boolean
           avatar_url?: string | null
           bio?: string | null
+          consent_version?: string | null
+          consented_at?: string | null
           country?: string | null
           created_at?: string
           display_name?: string | null
@@ -141,14 +150,20 @@ export type Database = {
           following_count?: number
           id: string
           likes_count?: number
+          profile_visibility?: string
           referred_by?: string | null
+          result_visibility?: string
+          show_on_leaderboard?: boolean
           tier?: Database["public"]["Enums"]["tier"]
           updated_at?: string
           username: string
         }
         Update: {
+          allow_search?: boolean
           avatar_url?: string | null
           bio?: string | null
+          consent_version?: string | null
+          consented_at?: string | null
           country?: string | null
           created_at?: string
           display_name?: string | null
@@ -156,7 +171,10 @@ export type Database = {
           following_count?: number
           id?: string
           likes_count?: number
+          profile_visibility?: string
           referred_by?: string | null
+          result_visibility?: string
+          show_on_leaderboard?: boolean
           tier?: Database["public"]["Enums"]["tier"]
           updated_at?: string
           username?: string
