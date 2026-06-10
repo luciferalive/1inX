@@ -9,8 +9,10 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SampleRouteImport } from './routes/sample'
 import { Route as ResultsRouteImport } from './routes/results'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PlansRouteImport } from './routes/plans'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
 import { Route as HelpRouteImport } from './routes/help'
@@ -26,6 +28,11 @@ import { Route as AuthenticatedSavedRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedReferralsRouteImport } from './routes/_authenticated/referrals'
 import { Route as AuthenticatedAchievementsRouteImport } from './routes/_authenticated/achievements'
 
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SampleRoute = SampleRouteImport.update({
   id: '/sample',
   path: '/sample',
@@ -34,6 +41,11 @@ const SampleRoute = SampleRouteImport.update({
 const ResultsRoute = ResultsRouteImport.update({
   id: '/results',
   path: '/results',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PlansRoute = PlansRouteImport.update({
@@ -116,8 +128,10 @@ export interface FileRoutesByFullPath {
   '/help': typeof HelpRoute
   '/leaderboard': typeof LeaderboardRoute
   '/plans': typeof PlansRoute
+  '/privacy': typeof PrivacyRoute
   '/results': typeof ResultsRoute
   '/sample': typeof SampleRoute
+  '/terms': typeof TermsRoute
   '/achievements': typeof AuthenticatedAchievementsRoute
   '/referrals': typeof AuthenticatedReferralsRoute
   '/saved': typeof AuthenticatedSavedRoute
@@ -133,8 +147,10 @@ export interface FileRoutesByTo {
   '/help': typeof HelpRoute
   '/leaderboard': typeof LeaderboardRoute
   '/plans': typeof PlansRoute
+  '/privacy': typeof PrivacyRoute
   '/results': typeof ResultsRoute
   '/sample': typeof SampleRoute
+  '/terms': typeof TermsRoute
   '/achievements': typeof AuthenticatedAchievementsRoute
   '/referrals': typeof AuthenticatedReferralsRoute
   '/saved': typeof AuthenticatedSavedRoute
@@ -152,8 +168,10 @@ export interface FileRoutesById {
   '/help': typeof HelpRoute
   '/leaderboard': typeof LeaderboardRoute
   '/plans': typeof PlansRoute
+  '/privacy': typeof PrivacyRoute
   '/results': typeof ResultsRoute
   '/sample': typeof SampleRoute
+  '/terms': typeof TermsRoute
   '/_authenticated/achievements': typeof AuthenticatedAchievementsRoute
   '/_authenticated/referrals': typeof AuthenticatedReferralsRoute
   '/_authenticated/saved': typeof AuthenticatedSavedRoute
@@ -171,8 +189,10 @@ export interface FileRouteTypes {
     | '/help'
     | '/leaderboard'
     | '/plans'
+    | '/privacy'
     | '/results'
     | '/sample'
+    | '/terms'
     | '/achievements'
     | '/referrals'
     | '/saved'
@@ -188,8 +208,10 @@ export interface FileRouteTypes {
     | '/help'
     | '/leaderboard'
     | '/plans'
+    | '/privacy'
     | '/results'
     | '/sample'
+    | '/terms'
     | '/achievements'
     | '/referrals'
     | '/saved'
@@ -206,8 +228,10 @@ export interface FileRouteTypes {
     | '/help'
     | '/leaderboard'
     | '/plans'
+    | '/privacy'
     | '/results'
     | '/sample'
+    | '/terms'
     | '/_authenticated/achievements'
     | '/_authenticated/referrals'
     | '/_authenticated/saved'
@@ -225,13 +249,22 @@ export interface RootRouteChildren {
   HelpRoute: typeof HelpRoute
   LeaderboardRoute: typeof LeaderboardRoute
   PlansRoute: typeof PlansRoute
+  PrivacyRoute: typeof PrivacyRoute
   ResultsRoute: typeof ResultsRoute
   SampleRoute: typeof SampleRoute
+  TermsRoute: typeof TermsRoute
   UUsernameRoute: typeof UUsernameRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sample': {
       id: '/sample'
       path: '/sample'
@@ -244,6 +277,13 @@ declare module '@tanstack/react-router' {
       path: '/results'
       fullPath: '/results'
       preLoaderRoute: typeof ResultsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/plans': {
@@ -374,10 +414,22 @@ const rootRouteChildren: RootRouteChildren = {
   HelpRoute: HelpRoute,
   LeaderboardRoute: LeaderboardRoute,
   PlansRoute: PlansRoute,
+  PrivacyRoute: PrivacyRoute,
   ResultsRoute: ResultsRoute,
   SampleRoute: SampleRoute,
+  TermsRoute: TermsRoute,
   UUsernameRoute: UUsernameRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
