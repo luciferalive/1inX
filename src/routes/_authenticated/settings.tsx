@@ -13,11 +13,6 @@ export const Route = createFileRoute("/_authenticated/settings")({
   component: SettingsPage,
 });
 
-export const Route = createFileRoute("/_authenticated/settings")({
-  head: () => ({ meta: [{ title: "Settings — 1 in X" }] }),
-  component: SettingsPage,
-});
-
 function SettingsPage() {
   const { user, profile, refreshProfile, signOut } = useAuth();
   const navigate = useNavigate();
@@ -98,18 +93,19 @@ function SettingsPage() {
 
   async function deleteAccount() {
     if (!confirm("Delete your account permanently? This cannot be undone.")) return;
-    if (!confirm("Are you absolutely sure? All your results and profile will be removed.")) return;
+    if (!confirm("Are you absolutely sure? All your results, profile, and referrals will be removed.")) return;
     setBusy(true);
     try {
-      // Soft-delete: scrub profile fields + sign out. Server-side hard delete needs admin fn.
-      if (user) {
-        await supabase.from("profiles").update({ display_name: "deleted", bio: null }).eq("id", user.id);
-      }
+      await wipeAccount({ data: undefined as any });
       await signOut();
-      toast.success("Account scheduled for deletion");
-    } catch {
-      toast.error("Could not delete account — contact hello@1inx.app");
+      toast.success("Account deleted");
+      navigate({ to: "/" });
+    } catch (e: any) {
+      toast.error(e?.message ?? "Could not delete account — contact hello@1inx.app");
     } finally {
+      setBusy(false);
+    }
+  }
       setBusy(false);
     }
   }
@@ -204,14 +200,69 @@ function SettingsPage() {
           />
         </Section>
 
-        <Section icon={<Shield className="h-4 w-4" />} title="Privacy">
+        <Section icon={<Eye className="h-4 w-4" />} title="Profile visibility">
+          <div className="space-y-2">
+            {([
+              ["public", "Public", "Anyone can view your profile."],
+              ["members", "Members only", "Only signed-in members can view your profile."],
+              ["private", "Private", "Only you can view your profile."],
+            ] as const).map(([val, label, desc]) => (
+              <button
+                key={val}
+                type="button"
+                onClick={() => { setProfileVisibility(val); patchPrivacy({ profile_visibility: val }); }}
+                className={`flex w-full items-start justify-between gap-3 rounded-xl border p-3 text-left text-sm transition ${profileVisibility === val ? "border-white/40 bg-white/10" : "border-white/10 bg-white/5"}`}
+              >
+                <div>
+                  <div className="font-medium">{label}</div>
+                  <div className="text-xs text-muted-foreground">{desc}</div>
+                </div>
+                <div className={`mt-1 h-4 w-4 rounded-full border ${profileVisibility === val ? "border-fuchsia-400 bg-fuchsia-500" : "border-white/30"}`} />
+              </button>
+            ))}
+          </div>
+        </Section>
+
+        <Section icon={<Shield className="h-4 w-4" />} title="Result visibility">
+          <div className="space-y-2">
+            {([
+              ["private", "Private", "Only you can see your full result."],
+              ["link", "Shareable link", "Anyone with your share link can see a summary."],
+              ["public", "On my public profile", "Show a summary on your public profile."],
+            ] as const).map(([val, label, desc]) => (
+              <button
+                key={val}
+                type="button"
+                onClick={() => { setResultVisibility(val); patchPrivacy({ result_visibility: val }); }}
+                className={`flex w-full items-start justify-between gap-3 rounded-xl border p-3 text-left text-sm transition ${resultVisibility === val ? "border-white/40 bg-white/10" : "border-white/10 bg-white/5"}`}
+              >
+                <div>
+                  <div className="font-medium">{label}</div>
+                  <div className="text-xs text-muted-foreground">{desc}</div>
+                </div>
+                <div className={`mt-1 h-4 w-4 rounded-full border ${resultVisibility === val ? "border-fuchsia-400 bg-fuchsia-500" : "border-white/30"}`} />
+              </button>
+            ))}
+          </div>
+          <p className="mt-3 text-xs text-muted-foreground">
+            Your raw assessment answers are never made public, regardless of this setting.
+          </p>
+        </Section>
+
+        <Section icon={<Shield className="h-4 w-4" />} title="Discoverability">
           <Toggle
-            label="Show my profile in Discover and Leaderboards"
-            checked={publicProfile}
-            onChange={setPublicProfile}
+            label="Show me on Leaderboards"
+            checked={showLeaderboard}
+            onChange={(v) => { setShowLeaderboard(v); patchPrivacy({ show_on_leaderboard: v }); }}
+          />
+          <div className="h-2" />
+          <Toggle
+            label="Allow my profile to appear in Search & Discover"
+            checked={allowSearch}
+            onChange={(v) => { setAllowSearch(v); patchPrivacy({ allow_search: v }); }}
           />
           <p className="mt-2 text-xs text-muted-foreground">
-            Your @handle stays reserved either way. Raw answers are never public.
+            Your @handle stays reserved either way. <Link to="/privacy" className="underline">Privacy Policy</Link>.
           </p>
         </Section>
 
