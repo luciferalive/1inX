@@ -1,0 +1,36 @@
+name: Release
+
+# Run it from the Actions tab ("Run workflow") and type a version like v0.1.0,
+# or push a tag that starts with "v".
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version tag to create, e.g. v0.1.0"
+        required: true
+        default: "v0.1.0"
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Build the standalone demo and zip it
+        run: |
+          node scripts/build-demo.mjs
+          cd docs && zip -r ../1inx-demo.zip . -x ".nojekyll"
+      - name: Create GitHub release with the demo attached
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.event.inputs.version || github.ref_name }}
+        run: |
+          gh release create "$TAG" 1inx-demo.zip --target "$GITHUB_SHA" --title "1 in X $TAG" --generate-notes \
+            || gh release upload "$TAG" 1inx-demo.zip --clobber
