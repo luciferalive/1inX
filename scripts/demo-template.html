@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1 in X — How rare are you? (live demo)</title>
+<meta name="description" content="Answer a few questions and see your 1 in X rarity score, percentile and archetype update live. Open source.">
+<meta property="og:title" content="1 in X — How rare are you?">
+<meta property="og:description" content="Answer a few questions and watch your rarity score update live.">
+<meta name="theme-color" content="#0b0b14">
+<style>
+  :root{
+    --bg:#0b0b14; --panel:#14142a; --panel2:#1a1a36; --line:#2a2a4a;
+    --text:#ececf6; --muted:#9a9ab8; --gold:#f5c76a;
+    --violet:#7c5cff; --magenta:#ff4fb0;
+    --grad:linear-gradient(135deg,var(--violet),var(--magenta));
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--text);
+    font:16px/1.55 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    background-image:radial-gradient(60rem 30rem at 15% -10%,rgba(124,92,255,.22),transparent 60%),
+                     radial-gradient(50rem 28rem at 95% 5%,rgba(255,79,176,.16),transparent 60%);
+    background-attachment:fixed}
+  a{color:inherit}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+  header{padding:22px 0;display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .logo{font-weight:700;letter-spacing:-.02em;font-size:20px}
+  .logo b{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .gh{font-size:14px;color:var(--muted);text-decoration:none;border:1px solid var(--line);
+    padding:7px 14px;border-radius:999px;transition:.2s}
+  .gh:hover{color:var(--text);border-color:var(--violet)}
+  .hero{text-align:center;padding:34px 0 26px}
+  .hero h1{margin:0;font-size:clamp(34px,6vw,60px);line-height:1.05;letter-spacing:-.03em;font-weight:700}
+  .hero h1 em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero p{color:var(--muted);max-width:560px;margin:14px auto 0}
+  .grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:22px;align-items:start;padding-bottom:60px}
+  @media(max-width:880px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px}
+  .cat{margin:0 0 22px}
+  .cat h2{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin:0 0 10px}
+  .q{padding:12px 0;border-top:1px solid var(--line)}
+  .q:first-of-type{border-top:0}
+  .q label{display:block;font-size:14.5px;margin-bottom:8px}
+  .q .unit{color:var(--muted)}
+  select,input[type=number]{width:100%;background:var(--panel2);color:var(--text);border:1px solid var(--line);
+    border-radius:10px;padding:10px 12px;font:inherit}
+  select:focus,input:focus{outline:2px solid var(--violet);outline-offset:1px}
+  .seg{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}
+  .seg button{background:var(--panel2);color:var(--muted);border:1px solid var(--line);border-radius:8px;
+    padding:8px 0;font:inherit;font-size:13px;cursor:pointer;transition:.15s}
+  .seg button:hover{border-color:var(--violet);color:var(--text)}
+  .seg button.on{background:var(--grad);color:#fff;border-color:transparent}
+  .result{position:sticky;top:18px}
+  .big{font-size:clamp(40px,7vw,64px);font-weight:800;letter-spacing:-.03em;line-height:1;margin:6px 0 2px}
+  .big small{font-size:.4em;color:var(--muted);font-weight:600;margin-right:6px}
+  .grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .muted{color:var(--muted)}
+  .stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0}
+  .stat{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+  .stat b{display:block;font-size:20px}
+  .stat span{font-size:12px;color:var(--muted)}
+  .bar{height:8px;border-radius:99px;background:var(--panel2);overflow:hidden;margin-top:6px}
+  .bar i{display:block;height:100%;background:var(--grad);width:0;transition:width .5s cubic-bezier(.2,.8,.2,1)}
+  .arch{border-radius:14px;padding:16px;margin:14px 0;background:linear-gradient(135deg,rgba(124,92,255,.25),rgba(255,79,176,.18));
+    border:1px solid rgba(255,255,255,.12)}
+  .arch .e{font-size:30px}
+  .arch h3{margin:2px 0 0;font-size:20px}
+  .arch p{margin:6px 0 0;color:#d6d6ee;font-size:14px}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .chip{font-size:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);padding:3px 10px;border-radius:99px}
+  ul.traits{list-style:none;margin:8px 0 0;padding:0}
+  ul.traits li{display:flex;justify-content:space-between;gap:10px;font-size:14px;padding:6px 0;border-top:1px solid var(--line)}
+  ul.traits li:first-child{border-top:0}
+  ul.traits span:last-child{color:var(--gold);white-space:nowrap}
+  .empty{text-align:center;padding:26px 6px;color:var(--muted)}
+  .empty .big{color:var(--line)}
+  .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+  .btn{flex:1;min-width:140px;text-align:center;text-decoration:none;border:0;cursor:pointer;font:inherit;font-weight:600;
+    padding:12px 16px;border-radius:12px;background:var(--grad);color:#fff;transition:transform .15s}
+  .btn:hover{transform:translateY(-1px)}
+  .btn.alt{background:var(--panel2);border:1px solid var(--line);color:var(--text)}
+  .note{font-size:12px;color:var(--muted);margin-top:12px}
+  footer{text-align:center;color:var(--muted);font-size:13px;padding:10px 0 40px}
+  footer a{color:var(--text)}
+  .reset{background:none;border:0;color:var(--muted);cursor:pointer;font:inherit;font-size:13px;text-decoration:underline;padding:0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">1 in <b>X</b></div>
+    <a class="gh" href="https://github.com/luciferalive/1inX" target="_blank" rel="noopener">★ Star on GitHub</a>
+  </header>
+
+  <section class="hero">
+    <h1>How <em>rare</em> are you,<br>really?</h1>
+    <p>Answer anything you like. Your score updates live as you go. Nothing is sent anywhere; this demo runs entirely in your browser.</p>
+  </section>
+
+  <main class="grid">
+    <section class="card" id="form" aria-label="Questions"></section>
+
+    <aside class="card result" id="result" aria-live="polite"></aside>
+  </main>
+
+  <footer>
+    Estimates use simplified global statistics for fun, not science.
+    Built with <a href="https://github.com/luciferalive/1inX" target="_blank" rel="noopener">1inX</a> — contributions welcome.
+  </footer>
+</div>
+
+<script>
+/* ---------- Data (generated from src/lib/rarity/*.ts by scripts/build-demo.mjs — do not edit) ---------- */
+/*__QUESTIONS__*/
+
+/*__ARCHETYPES__*/
+
+// ==ENGINE_START==
+// Mirrors src/lib/rarity/engine.ts (model "hybrid-v1"). scripts/check-demo-parity.mjs keeps them in sync.
+const MIN_ONE_IN_X = 8, MAX_ONE_IN_X = 2500000;
+const MIN_PERCENTILE = 50, MAX_PERCENTILE = 99.97, MIN_TRAIT_RARITY = 2;
+
+function correlationFactor(n) {
+  if (n <= 4) return 0.45;
+  if (n <= 8) return 0.38;
+  if (n <= 14) return 0.30;
+  if (n <= 20) return 0.24;
+  return 0.20;
+}
+function rawRarityForAnswer(q, value) {
+  if (q.type === "select" && q.options) {
+    const opt = q.options.find((o) => o.value === value);
+    return opt ? opt.rarity : 50;
+  }
+  if ((q.type === "number" || q.type === "slider" || q.type === "height") && q.rarityFn) return q.rarityFn(Number(value));
+  return 50;
+}
+function labelForAnswer(q, value) {
+  if (q.type === "select" && q.options) {
+    const o = q.options.find((o) => o.value === value);
+    return o ? o.label : String(value);
+  }
+  return value + (q.unit ? " " + q.unit : "");
+}
+function pickArchetype(a, traits) {
+  const score = {};
+  const add = (k, n) => (score[k] = (score[k] ?? 0) + n);
+  const countries = Number(a.countries ?? 0), langs = Number(a.languages ?? 1);
+  const income = String(a.income ?? ""), business = String(a.business ?? ""), coding = String(a.coding ?? "");
+  const reading = Number(a.reading ?? 0), sleep = String(a.sleep ?? "");
+  const intro = Number(a.intro ?? 5), leader = Number(a.leader ?? 5), creative = Number(a.creative ?? 5), risk = Number(a.risk ?? 5);
+  const ai = String(a.ai ?? ""), instruments = Number(a.instruments ?? 0), fitness = Number(a.fitness ?? 0);
+
+  add("global_dealmaker", countries * 2 + (income.includes("250") || income === "1m+" ? 25 : 0) + (business !== "no" ? 10 : 0));
+  add("silent_strategist", (10 - intro) * 3 + leader * 2 + (reading > 10 ? 10 : 0));
+  add("digital_nomad", countries * 3 + (coding !== "no" ? 8 : 0));
+  add("chaos_explorer", risk * 4 + (business !== "no" ? 10 : 0));
+  add("data_warrior", (coding === "pro" || coding === "expert" ? 25 : coding === "basic" ? 10 : 0) + reading);
+  add("visionary_operator", leader * 3 + risk * 2 + (business === "yes" || business === "multi" ? 20 : 0));
+  add("modern_renaissance", langs * 5 + instruments * 6 + creative * 2);
+  add("curious_thinker", reading + (10 - leader) + creative * 2);
+  add("world_connector", intro * 3 + countries + (leader > 6 ? 10 : 0));
+  add("maverick_creator", creative * 4 + (business !== "no" ? 8 : 0) + risk * 2);
+  add("night_owl_genius", (sleep === "owl" ? 35 : sleep === "late" ? 18 : 0) + creative * 2 + (coding !== "no" ? 5 : 0));
+  add("master_builder", fitness * 2 + (ai === "power" ? 6 : 0) + (10 - risk) + leader);
+
+  const byCat = { Travel: "digital_nomad", Career: "global_dealmaker", Skills: "modern_renaissance",
+    Personality: "visionary_operator", Technology: "data_warrior", Lifestyle: "night_owl_genius" };
+  for (const t of traits) if (t.rarity < 5) add(byCat[t.category] ?? "curious_thinker", 5);
+
+  const winner = Object.entries(score).sort((a, b) => b[1] - a[1])[0]?.[0] ?? "curious_thinker";
+  return ARCHETYPES[winner];
+}
+const CONTINENT_SHARE = { asia: .59, africa: .18, europe: .09, namerica: .075, samerica: .055, oceania: .006, antarctica: .00001 };
+
+function calculateRarity(answers) {
+  const traits = [];
+  let logSum = 0, answered = 0;
+  for (const q of QUESTIONS) {
+    if (answers[q.id] === undefined || answers[q.id] === "") continue;
+    const raw = rawRarityForAnswer(q, answers[q.id]);
+    const r = Math.max(MIN_TRAIT_RARITY, Math.min(99, raw));
+    traits.push({ id: q.id, label: q.label, category: q.category, answerLabel: labelForAnswer(q, answers[q.id]), rarity: r });
+    logSum += Math.log(r / 100);
+    answered++;
+  }
+  const dampened = logSum * correlationFactor(answered);
+  let globalRarity = Math.exp(dampened) * 100;
+  globalRarity = Math.max((1 / MAX_ONE_IN_X) * 100, Math.min((1 / MIN_ONE_IN_X) * 100, globalRarity));
+  const oneInX = Math.round(Math.max(MIN_ONE_IN_X, Math.min(MAX_ONE_IN_X, 100 / globalRarity)));
+  const percentile = Math.max(MIN_PERCENTILE, Math.min(MAX_PERCENTILE, 100 - globalRarity));
+  const sorted = [...traits].sort((a, b) => a.rarity - b.rarity);
+  const archetype = pickArchetype(answers, traits);
+  const confidence = Math.round(Math.min(1, answered / QUESTIONS.length) * 0.85 * 100) / 100;
+  return { oneInX, percentile, globalRarity, traits, rarestTraits: sorted.slice(0, 3),
+    commonTraits: sorted.slice(-3).reverse(), archetype, confidence, answered };
+}
+function formatOneInX(n) {
+  if (n < 1e6) return n.toLocaleString("en-US");
+  if (n < 1e9) return (n / 1e6).toFixed(1) + "M";
+  return (n / 1e9).toFixed(2) + "B";
+}
+// ==ENGINE_END==
+
+/* ---------- UI ---------- */
+const answers = {};
+const $form = document.getElementById("form");
+const $res = document.getElementById("result");
+
+function el(tag, attrs = {}, ...kids) {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "class") n.className = v; else if (k.startsWith("on")) n.addEventListener(k.slice(2), v); else n.setAttribute(k, v);
+  }
+  for (const k of kids) n.append(k);
+  return n;
+}
+function setAnswer(id, v) {
+  if (v === "" || v === undefined || Number.isNaN(v)) delete answers[id]; else answers[id] = v;
+  render();
+}
+function buildInput(q) {
+  if (q.type === "select") {
+    const s = el("select", { id: "q-" + q.id, onchange: (e) => setAnswer(q.id, e.target.value) },
+      el("option", { value: "" }, "Choose…"),
+      ...q.options.map((o) => el("option", { value: o.value }, o.label)));
+    return s;
+  }
+  if (q.type === "slider") {
+    const seg = el("div", { class: "seg", role: "group", "aria-label": q.label });
+    for (let i = q.min; i <= q.max; i++) {
+      seg.append(el("button", { type: "button", "data-v": i, onclick: (e) => {
+        const on = answers[q.id] === i;
+        setAnswer(q.id, on ? undefined : i);
+        [...seg.children].forEach((b) => b.classList.toggle("on", Number(b.dataset.v) === answers[q.id]));
+      } }, String(i)));
+    }
+    return seg;
+  }
+  const inp = el("input", { type: "number", id: "q-" + q.id, min: q.min, max: q.max, inputmode: "numeric",
+    placeholder: `${q.min} – ${q.max}`, oninput: (e) => {
+      if (e.target.value === "") return setAnswer(q.id, undefined);
+      const n = Math.max(q.min, Math.min(q.max, Number(e.target.value)));
+      setAnswer(q.id, n);
+    } });
+  return inp;
+}
+function buildForm() {
+  const cats = [...new Set(QUESTIONS.map((q) => q.category))];
+  for (const c of cats) {
+    const sec = el("section", { class: "cat" }, el("h2", {}, c));
+    for (const q of QUESTIONS.filter((x) => x.category === c)) {
+      const lab = el("label", { for: "q-" + q.id }, q.label + " ");
+      if (q.unit) lab.append(el("span", { class: "unit" }, "(" + q.unit + ")"));
+      sec.append(el("div", { class: "q" }, lab, buildInput(q)));
+    }
+    $form.append(sec);
+  }
+}
+function reset() {
+  for (const k of Object.keys(answers)) delete answers[k];
+  $form.innerHTML = ""; buildForm(); render();
+}
+function share(r) {
+  const text = `I'm 1 in ${formatOneInX(r.oneInX)} — ${r.archetype.emoji} ${r.archetype.name}. How rare are you?`;
+  const full = text + " " + location.href.split("#")[0];
+  if (navigator.share) navigator.share({ title: "1 in X", text, url: location.href }).catch(() => {});
+  else navigator.clipboard?.writeText(full).then(() => alert("Copied to clipboard!")).catch(() => prompt("Copy this:", full));
+}
+function render() {
+  const r = calculateRarity(answers);
+  $res.innerHTML = "";
+  if (r.answered < 3) {
+    $res.append(el("div", { class: "empty" },
+      el("div", { class: "big" }, "1 in ?"),
+      el("p", {}, `Answer at least 3 questions to reveal your score. (${r.answered}/3)`)));
+    return;
+  }
+  const pct = r.percentile.toFixed(2);
+  $res.append(
+    el("div", { class: "muted" }, "Your rarity"),
+    el("div", { class: "big" }, el("small", {}, "1 in"), el("span", { class: "grad" }, formatOneInX(r.oneInX))),
+    el("div", { class: "muted" }, `Rarer than ${pct}% of people`),
+    el("div", { class: "bar" }, el("i", { style: `width:${Math.min(100, r.percentile)}%` })),
+    el("div", { class: "stats" },
+      el("div", { class: "stat" }, el("b", {}, r.globalRarity < 0.01 ? r.globalRarity.toFixed(5) + "%" : r.globalRarity.toFixed(3) + "%"), el("span", {}, "of people match your profile")),
+      el("div", { class: "stat" }, el("b", {}, Math.round(r.confidence * 100) + "%"), el("span", {}, `confidence · ${r.answered}/${QUESTIONS.length} answered`))),
+    el("div", { class: "arch" },
+      el("div", { class: "e" }, r.archetype.emoji),
+      el("h3", {}, r.archetype.name),
+      el("p", {}, r.archetype.tagline + " " + r.archetype.description),
+      el("div", { class: "chips" }, ...r.archetype.strengths.map((s) => el("span", { class: "chip" }, s)))),
+    el("div", { class: "muted" }, "Your rarest traits"),
+    el("ul", { class: "traits" }, ...r.rarestTraits.map((t) =>
+      el("li", {}, el("span", {}, `${t.label}: ${t.answerLabel}`), el("span", {}, `${t.rarity}%`)))),
+    el("div", { class: "btns" },
+      el("button", { class: "btn", type: "button", onclick: () => share(r) }, "Share my result"),
+      el("a", { class: "btn alt", href: "https://github.com/luciferalive/1inX", target: "_blank", rel: "noopener" }, "Contribute")),
+    el("p", { class: "note" }, "Fun estimate from simplified global statistics. ",
+      el("button", { class: "reset", type: "button", onclick: reset }, "Start over")));
+}
+buildForm(); render();
+</script>
+</body>
+</html>

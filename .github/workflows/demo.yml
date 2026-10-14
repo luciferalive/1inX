@@ -1,0 +1,21 @@
+name: Demo check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  demo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Rebuild demo from source
+        run: node scripts/build-demo.mjs
+      - name: Demo must be committed and up to date
+        run: git diff --exit-code docs/
+      - name: Demo engine must match the real engine
+        run: node scripts/check-demo-parity.mjs
