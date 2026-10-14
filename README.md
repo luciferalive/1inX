@@ -115,9 +115,22 @@ Apply the database schema from [`supabase/migrations/`](supabase/migrations) to 
   ([`src/integrations/lovable`](src/integrations/lovable)). Email/password works with plain Supabase;
   for Google outside Lovable Cloud, swap in Supabase's own `signInWithOAuth`.
 - **Build target.** The Vite config (`@lovable.dev/vite-tanstack-config`) builds for Cloudflare by default.
-  Deploying elsewhere (e.g. Vercel) may need a different Nitro preset.
-- **Vercel previews are private by default.** If your deployment URL sends visitors to a Vercel login page,
-  turn off *Deployment Protection* for the production domain in your Vercel project settings.
+  If you host somewhere else, you may need to change the Nitro preset.
+
+## Build your own site from this code
+
+This project is fully open source (MIT). You're free to copy it, change it and launch your own version,
+and there is no hosted site tied to this repo. To make your own:
+
+1. **Fork** this repo (or click *Use this template* / download the code).
+2. Create a free [Supabase](https://supabase.com) project and apply [`supabase/migrations/`](supabase/migrations).
+3. Copy `.env.example` to `.env` and add your own Supabase values.
+4. Run it locally with `npm install && npm run dev`, then `npm run build` when you're ready to deploy.
+5. Make it yours: change the name, colors, questions ([`questions.ts`](src/lib/rarity/questions.ts)) and
+   archetypes ([`archetypes.ts`](src/lib/rarity/archetypes.ts)).
+
+Want a no-setup way to share something right away? The static [live demo](https://luciferalive.github.io/1inX/)
+in [`docs/`](docs) needs no backend and can be hosted for free on any static host.
 
 ## The demo (GitHub Pages)
 
