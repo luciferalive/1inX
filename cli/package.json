@@ -1,0 +1,37 @@
+{
+  "name": "@luciferalive/1inx",
+  "version": "0.1.0",
+  "description": "Find out how rare you really are, right in your terminal. Your 1 in X score, percentile and archetype.",
+  "type": "module",
+  "bin": {
+    "1inx": "bin/1inx.mjs"
+  },
+  "files": [
+    "bin",
+    "src",
+    "examples",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "cli",
+    "rarity",
+    "quiz",
+    "personality-test",
+    "terminal",
+    "fun"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/luciferalive/1inX.git",
+    "directory": "cli"
+  },
+  "bugs": "https://github.com/luciferalive/1inX/issues",
+  "homepage": "https://github.com/luciferalive/1inX#readme",
+  "publishConfig": {
+    "access": "public"
+  }
+}

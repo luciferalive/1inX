@@ -23,14 +23,39 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Build the standalone demo and zip it
+      - name: Check everything passes
         run: |
           node scripts/build-demo.mjs
-          cd docs && zip -r ../1inx-demo.zip . -x ".nojekyll"
-      - name: Create GitHub release with the demo attached
+          node scripts/check-demo-parity.mjs
+          node scripts/test-cli.mjs
+      - name: Package the terminal tool and the browser demo
+        run: |
+          (cd cli && npm pack --pack-destination ..)
+          (cd docs && zip -r ../1inx-demo.zip . -x ".nojekyll")
+          ls -la *.tgz *.zip
+      - name: Create GitHub release with the files attached
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ github.event.inputs.version || github.ref_name }}
         run: |
-          gh release create "$TAG" 1inx-demo.zip --target "$GITHUB_SHA" --title "1 in X $TAG" --generate-notes \
-            || gh release upload "$TAG" 1inx-demo.zip --clobber
+          gh release create "$TAG" ./*.tgz 1inx-demo.zip --target "$GITHUB_SHA" --title "1 in X $TAG" --generate-notes \
+            || gh release upload "$TAG" ./*.tgz 1inx-demo.zip --clobber
+
+  # Optional: publish the terminal tool to npm so people can run `npx @luciferalive/1inx`.
+  # Turn on by (1) creating an npm access token and saving it as a repository secret named NPM_TOKEN,
+  # then (2) adding a repository variable PUBLISH_TO_NPM = true.
+  npm:
+    needs: release
+    if: vars.PUBLISH_TO_NPM == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: "https://registry.npmjs.org"
+      - run: node scripts/build-demo.mjs
+      - run: npm publish --access public
+        working-directory: cli
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

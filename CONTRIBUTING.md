@@ -12,14 +12,16 @@ cp .env.example .env     # add your own Supabase values
 npm run dev
 ```
 
-You can work on the scoring and the demo **without any backend**:
+You can work on the scoring, the browser demo and the terminal tool **without any backend**:
 
 ```bash
-node scripts/build-demo.mjs          # rebuild docs/index.html
-node scripts/check-demo-parity.mjs   # demo must match the real engine (Node 22.18+)
+node scripts/build-demo.mjs          # rebuild docs/index.html and cli/src/engine.mjs
+node scripts/check-demo-parity.mjs   # demo + terminal tool must match the real engine (Node 22.18+)
+node scripts/test-cli.mjs            # terminal tool tests
+node cli/bin/1inx.mjs                # try the terminal tool
 ```
 
-Open `docs/index.html` in a browser to try your changes.
+Open `docs/index.html` in a browser to try the demo.
 
 ## Easy ways to contribute
 
@@ -29,10 +31,11 @@ Open `docs/index.html` in a browser to try your changes.
 | Add a question | `src/lib/rarity/questions.ts` |
 | Add or tweak an archetype | `src/lib/rarity/archetypes.ts` and the scoring in `engine.ts` |
 | Improve the UI | `src/routes/` and `src/components/` |
+| Improve the terminal tool | `cli/bin/1inx.mjs` |
 | Fix wording, docs, typos | anywhere |
 
-After touching `questions.ts`, `archetypes.ts` or `engine.ts`, run the two `node scripts/...` commands above and
-commit the regenerated `docs/index.html`. **If you change the scoring in `engine.ts`, mirror it in
+After touching `questions.ts`, `archetypes.ts` or `engine.ts`, run the `node scripts/...` commands above and
+commit the regenerated `docs/index.html` and `cli/src/engine.mjs`. **If you change the scoring in `engine.ts`, mirror it in
 `scripts/demo-template.html`**, and the parity check will tell you if they disagree.
 
 ## Pull request flow

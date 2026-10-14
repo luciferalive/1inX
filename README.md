@@ -26,11 +26,22 @@ Then it assigns you one of 12 archetypes, shows the traits that make you rarest,
 
 ## Try it in 10 seconds
 
-The **[live demo](https://luciferalive.github.io/1inX/)** runs entirely in your browser (nothing is sent anywhere).
-Your score updates **live** as you answer, so try changing one answer and watch the number jump.
+**In your terminal** (needs [Node.js](https://nodejs.org) 18+, no installs, no accounts):
+
+```bash
+git clone https://github.com/luciferalive/1inX.git
+node 1inX/cli/bin/1inx.mjs          # answer all 27 questions
+node 1inX/cli/bin/1inx.mjs --quick  # or just 12 of them
+```
+
+**In your browser:** the **[live demo](https://luciferalive.github.io/1inX/)** runs entirely on your device
+(nothing is sent anywhere). Your score updates **live** as you answer, so try changing one answer and watch the number jump.
+
+More options (JSON output, answers from a file, install as a command) are in [`cli/README.md`](cli/README.md).
 
 ## Features
 
+- 💻 **Terminal tool** (`1inx`) with zero dependencies, plus `--json` for scripts
 - 🎯 **27 questions** across Personal, Education, Career, Lifestyle, Travel, Skills, Technology and Personality
 - 📉 **Calibrated rarity model** with believable bounds (never "100% rare", never "1 in a billion")
 - 🎭 **12 archetypes** with strengths, weaknesses and taglines
@@ -84,7 +95,7 @@ raw product is *dampened*, and the more questions you answer, the stronger the d
 [TanStack Start](https://tanstack.com/start) · React 19 · TypeScript · Tailwind CSS 4 · Radix UI / shadcn ·
 Motion · Supabase (Postgres + Auth) · Vite 7
 
-## Run it locally
+## Run the full web app locally
 
 You need Node 20+ and a [Supabase](https://supabase.com) project.
 
@@ -132,14 +143,15 @@ and there is no hosted site tied to this repo. To make your own:
 Want a no-setup way to share something right away? The static [live demo](https://luciferalive.github.io/1inX/)
 in [`docs/`](docs) needs no backend and can be hosted for free on any static host.
 
-## The demo (GitHub Pages)
+## Generated files (browser demo + terminal tool)
 
-[`docs/index.html`](docs/index.html) is a single-file demo **generated from the real question and archetype data**,
-so it can't drift from the app.
+[`docs/index.html`](docs/index.html) (the browser demo) and [`cli/src/engine.mjs`](cli/src/engine.mjs)
+(the terminal tool's engine) are **generated from the real question and archetype data**, so they can't drift from the app.
 
 ```bash
-node scripts/build-demo.mjs          # regenerate docs/index.html
-node scripts/check-demo-parity.mjs   # prove demo == real engine on 2,000 random profiles (Node 22.18+)
+node scripts/build-demo.mjs          # regenerate both files
+node scripts/check-demo-parity.mjs   # prove demo + terminal tool == real engine on 2,000 random profiles (Node 22.18+)
+node scripts/test-cli.mjs            # run the terminal tool's tests
 ```
 
 ## Project structure
@@ -151,8 +163,9 @@ src/
   components/      UI building blocks (shadcn/ui + app components)
   integrations/    Supabase + auth wiring
 supabase/migrations/   database schema + RLS policies
-docs/              GitHub Pages demo
-scripts/           demo generator + parity check
+cli/               the `1inx` terminal tool (zero dependencies)
+docs/              browser demo (GitHub Pages)
+scripts/           generator, parity check and CLI tests
 ```
 
 ## Roadmap

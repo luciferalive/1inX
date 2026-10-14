@@ -1,4 +1,4 @@
-// Verifies the demo's scoring engine gives the SAME results as the real TypeScript engine
+// Verifies the browser demo's AND the terminal tool's scoring engines give the SAME results as the real TypeScript engine
 // (src/lib/rarity/engine.ts) for many random answer sets.
 // Run:  node scripts/check-demo-parity.mjs        (needs Node 22.18+ for built-in TS support)
 
@@ -36,6 +36,14 @@ vm.runInContext(
   ctx,
 );
 
+// 2b) Load the terminal tool's engine (cli/src/engine.mjs).
+const cliPath = path.join(root, "cli/src/engine.mjs");
+if (!fs.existsSync(cliPath)) {
+  console.error("cli/src/engine.mjs missing — run: node scripts/build-demo.mjs");
+  process.exit(1);
+}
+const cli = await import(pathToFileURL(cliPath).href);
+
 // 3) Compare on random inputs (seeded so failures are reproducible).
 let seed = 1234567;
 const rnd = () => ((seed = (seed * 1664525 + 1013904223) % 4294967296) / 4294967296);
@@ -57,20 +65,21 @@ for (let i = 0; i < N; i++) {
   const a = randomAnswers();
   const x = real.calculateRarity(a);
   const y = ctx.calculateRarity(a);
-  const same =
-    x.oneInX === y.oneInX &&
-    Math.abs(x.percentile - y.percentile) < 1e-9 &&
-    x.archetype.id === y.archetype.id &&
-    x.confidence === y.confidence &&
-    x.rarestTraits.map((t) => t.id).join() === y.rarestTraits.map((t) => t.id).join();
-  if (!same) {
+  const z = cli.calculateRarity(a);
+  const matches = (o) =>
+    x.oneInX === o.oneInX &&
+    Math.abs(x.percentile - o.percentile) < 1e-9 &&
+    x.archetype.id === o.archetype.id &&
+    x.confidence === o.confidence &&
+    x.rarestTraits.map((t) => t.id).join() === o.rarestTraits.map((t) => t.id).join();
+  if (!(matches(y) && matches(z))) {
     failures++;
-    if (failures <= 3) console.error("MISMATCH", JSON.stringify(a), { real: x.oneInX, demo: y.oneInX });
+    if (failures <= 3) console.error("MISMATCH", JSON.stringify(a), { real: x.oneInX, demo: y.oneInX, cli: z.oneInX });
   }
 }
 fs.rmSync(tmp, { recursive: true, force: true });
 if (failures) {
-  console.error(`✘ ${failures}/${N} mismatches between demo and real engine`);
+  console.error(`✘ ${failures}/${N} mismatches between the real engine and the demo/terminal tool`);
   process.exit(1);
 }
-console.log(`✔ demo engine matches the real engine on ${N} random profiles`);
+console.log(`✔ demo and terminal-tool engines match the real engine on ${N} random profiles`);
